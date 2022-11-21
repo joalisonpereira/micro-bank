@@ -1,0 +1,70 @@
+version: "3"
+
+services:
+  # clients:
+  #   build: .
+  #   entrypoint: wait-for db:3306 -t 40 -- sh -c "npm install && npm run start:dev"
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - .:/home/node/app
+
+  # clients_db:
+  #   build: mysql
+  #   restart: always
+  #   tty: true
+  #   volumes:
+  #     - ./.docker/dbdata:/var/lib/mysql
+  #   environment:
+  #     - MYSQL_DATABASE=clients
+  #     - MYSQL_ROOT_PASSWORD=root
+
+  # accounts:
+  #   build: .
+  #   entrypoint: wait-for db:3306 -t 40 -- sh -c "npm install && npm run start:dev"
+  #   ports:
+  #     - 3001:3001
+  #   volumes:
+  #     - .:/home/node/app
+
+  # accounts_db:
+  #   build: mysql
+  #   restart: always
+  #   tty: true
+  #   volumes:
+  #     - ./.docker/dbdata:/var/lib/mysql
+  #   environment:
+  #     - MYSQL_DATABASE=accounts
+  #     - MYSQL_ROOT_PASSWORD=root
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:6.0.1
+    hostname: control-center
+    depends_on:
+      - kafka
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: "kafka:9092"
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      PORT: 9021
