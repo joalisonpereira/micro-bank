@@ -9,7 +9,7 @@ import { CreateAccountDto } from './dto/create-account.dto';
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
-  @MessagePattern('createAccount')
+  @MessagePattern('customers.create')
   create(@Payload() createAccountDto: CreateAccountDto) {
     return this.accountsService.create(createAccountDto);
   }

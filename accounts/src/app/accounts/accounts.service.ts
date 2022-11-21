@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import crypto from 'node:crypto';
+import { v4 as uuidv4 } from 'uuid';
 import { CreateAccountDto } from './dto/create-account.dto';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class AccountsService {
   constructor(private readonly prismaService: PrismaService) {}
 
   create(createAccountDto: CreateAccountDto) {
-    const code = crypto.randomUUID().replace(/\D/g, '').concat('-0');
+    const code = uuidv4().replace(/\D/g, '').concat('-0');
 
     const account = { ...createAccountDto, code };
 
