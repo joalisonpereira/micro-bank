@@ -9,15 +9,15 @@ services:
   #   volumes:
   #     - .:/home/node/app
 
-  # clients_db:
-  #   build: mysql
-  #   restart: always
-  #   tty: true
-  #   volumes:
-  #     - ./.docker/dbdata:/var/lib/mysql
-  #   environment:
-  #     - MYSQL_DATABASE=clients
-  #     - MYSQL_ROOT_PASSWORD=root
+  clients_db:
+    build: mysql
+    restart: always
+    tty: true
+    volumes:
+      - ./.docker/dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=clients
+      - MYSQL_ROOT_PASSWORD=root
 
   # accounts:
   #   build: .
